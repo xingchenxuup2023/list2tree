@@ -3,6 +3,7 @@ package com.xcx.test;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Logger;
 
 /**
  * BuildTree 构建树形结构
@@ -12,10 +13,12 @@ import java.util.Optional;
  */
 public class TreeBuild<T extends BaseTreeNode<T>> {
 
+    public static Logger logger = Logger.getLogger("TreeBuild");
+
     // 保存参与构建树形的所有数据
     public List<T> nodeList;
-    //所有的根节点存储下方便查看 删了就行
-    private List<T> rootNodeList = new ArrayList<>();
+    private final List<T> exceptionList = new ArrayList<>();
+    private boolean strict;
 
 
     /**
@@ -25,6 +28,13 @@ public class TreeBuild<T extends BaseTreeNode<T>> {
      */
     public TreeBuild(List<T> nodeList) {
         this.nodeList = nodeList;
+        this.exceptionList.addAll(nodeList);
+    }
+
+    public TreeBuild(List<T> nodeList, boolean strict) {
+        this.nodeList = nodeList;
+        this.strict = strict;
+        this.exceptionList.addAll(nodeList);
     }
 
     /**
@@ -41,11 +51,11 @@ public class TreeBuild<T extends BaseTreeNode<T>> {
             if (item.getParentIdAction().get().equals(item.getIdAction().get())) {
                 // 是，添加
                 rootNodeList.add(item);
+                exceptionList.remove(item);
                 return true;
             }
             return false;
         });
-        this.rootNodeList = rootNodeList;
         return rootNodeList;
     }
 
@@ -65,6 +75,15 @@ public class TreeBuild<T extends BaseTreeNode<T>> {
             // 完成一个根节点所构建的树，增加进来
             treeNodes.add(item);
         });
+        if (exceptionList.size() > 0) {
+            StringBuilder s = new StringBuilder("异常数据：\n");
+            exceptionList.forEach(s::append);
+            if (strict) {
+                throw new RuntimeException("数据不合法###" + s);
+            } else {
+                logger.warning(s.toString());
+            }
+        }
         return treeNodes;
     }
 
@@ -82,6 +101,7 @@ public class TreeBuild<T extends BaseTreeNode<T>> {
             if (item.getParentIdAction().get().equals(pNode.getIdAction().get())) {
                 // 递归调用
                 childTree.add(buildChildTree(item));
+                exceptionList.remove(item);
             }
         });
         // 树形构建结束

@@ -19,4 +19,13 @@ public class TreeNodeTest extends BaseTreeNode<TreeNodeTest> {
         this.setIdAction(this::getTreeId);
         this.setParentIdAction(this::getTreePId);
     }
+
+    @Override
+    public String toString() {
+        return "TreeNodeTest{" +
+                "treeId=" + treeId +
+                ", treePId=" + treePId +
+                ", desc='" + desc + '\'' +
+                '}'+"\n";
+    }
 }

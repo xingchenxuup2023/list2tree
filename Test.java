@@ -17,8 +17,10 @@ public class Test {
         treeNodeList.add(new TreeNodeTest(6L, 6L, "我是父节点6"));
         treeNodeList.add(new TreeNodeTest(7L, 6L, "我是6的子节点7"));
         treeNodeList.add(new TreeNodeTest(8L, 6L, "我是6的子节点8"));
+        treeNodeList.add(new TreeNodeTest(9L, 99L, "我是异常数据"));
 
         // 创建树形结构（数据集合作为参数）
+//        TreeBuild<TreeNodeTest> treeBuild = new TreeBuild<>(treeNodeList,true);
         TreeBuild<TreeNodeTest> treeBuild = new TreeBuild<>(treeNodeList);
         // 原查询结果转换树形结构
         treeNodeList = treeBuild.buildTree();
